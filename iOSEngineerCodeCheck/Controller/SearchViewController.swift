@@ -8,65 +8,44 @@
 
 import UIKit
 
-class SearchViewController: UITableViewController, UISearchBarDelegate {
+class SearchViewController: UITableViewController {
     
     @IBOutlet weak var SearchBar: UISearchBar!
     
     var items = [Repository.Item]()
-    var task: URLSessionTask?
-    var word: String?
     var index: Int = 0
+    private var api = GithubAPI()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         SearchBar.text = "GitHubのリポジトリを検索できるよー"
         SearchBar.delegate = self
     }
+}
+
+extension SearchViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        task?.cancel()
+        api.stopTask()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
-        guard word?.count != 0 else { return }
+        guard let text = searchBar.text, !text.isEmpty
+        else { return }
         
-        let session = URLSession.shared
-        let url = "https://api.github.com/search/repositories?q="
-        word = searchBar.text ?? ""
-        
-        guard let percentEncoding = word?.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-              let url = URL(string: url + percentEncoding) else {
-            print("error")
-            return
-        }
-        
-        task = session.dataTask(with: url) { [weak self](data, response, _) in
-            
-            guard let data = data else {
-                print("error")
-                return
-            }
-            
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let repository = try decoder.decode(Repository.self, from: data)
-                let items = repository.items
-                self?.items = items
-                
+        api.getRepositories(word: text) { [weak self] result in
+            switch result {
+            case .success(let repositories):
+                self?.items = repositories
                 DispatchQueue.main.async {
                     self?.tableView.reloadData()
                 }
-            } catch {
+            case .failure(let error):
                 print(error)
             }
-            
         }
-        task?.resume()
-        
     }
-    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
