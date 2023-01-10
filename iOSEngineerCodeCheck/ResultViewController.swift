@@ -10,13 +10,13 @@ import UIKit
 
 class ResultViewController: UIViewController {
     
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var languageLabel: UILabel!
-    @IBOutlet weak var starsLabel: UILabel!
-    @IBOutlet weak var watchersLabel: UILabel!
-    @IBOutlet weak var forksLabel: UILabel!
-    @IBOutlet weak var issuesLabel: UILabel!
+    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var titleLabel: UILabel!
+    @IBOutlet private weak var languageLabel: UILabel!
+    @IBOutlet private weak var starsLabel: UILabel!
+    @IBOutlet private weak var watchersLabel: UILabel!
+    @IBOutlet private weak var forksLabel: UILabel!
+    @IBOutlet private weak var issuesLabel: UILabel!
     
     var searchViewController: SearchViewController!
     
@@ -25,7 +25,7 @@ class ResultViewController: UIViewController {
         
         let repository = searchViewController.items[searchViewController.index]
         
-        languageLabel.text = "Written in \(String(describing: repository.language))"
+        languageLabel.text = "Written in \(repository.language)"
         starsLabel.text = "\(repository.stargazersCount) stars"
         watchersLabel.text = "\(repository.watchersCount) watchers"
         forksLabel.text = "\(repository.forksCount) forks"
@@ -35,11 +35,12 @@ class ResultViewController: UIViewController {
         
     }
     
-    func getImage() {
+    private func getImage() {
         
         let repository = searchViewController.items[searchViewController.index]
         titleLabel.text = repository.fullName
         let imageURL = repository.owner.avatarUrl
+        
         guard  let url = URL(string: imageURL) else {
             print("error")
             return

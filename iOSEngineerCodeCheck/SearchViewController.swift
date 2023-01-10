@@ -14,9 +14,8 @@ class SearchViewController: UITableViewController, UISearchBarDelegate {
     
     var items = [Repository.Item]()
     var task: URLSessionTask?
-    var word: String!
-    var url: String!
-    var index: Int!
+    var word: String?
+    var index: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +41,7 @@ class SearchViewController: UITableViewController, UISearchBarDelegate {
             return
         }
         
-        task = session.dataTask(with: url) { (data, response, _) in
+        task = session.dataTask(with: url) { [weak self](data, response, _) in
             
             guard let data = data else {
                 print("error")
@@ -54,10 +53,10 @@ class SearchViewController: UITableViewController, UISearchBarDelegate {
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 let repository = try decoder.decode(Repository.self, from: data)
                 let items = repository.items
-                self.items = items
+                self?.items = items
                 
                 DispatchQueue.main.async {
-                    self.tableView.reloadData()
+                    self?.tableView.reloadData()
                 }
             } catch {
                 print(error)
