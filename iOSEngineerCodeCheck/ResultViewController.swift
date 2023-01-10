@@ -11,11 +11,8 @@ import UIKit
 class ResultViewController: UIViewController {
     
     @IBOutlet weak var imageView: UIImageView!
-    
     @IBOutlet weak var titleLabel: UILabel!
-    
     @IBOutlet weak var languageLabel: UILabel!
-    
     @IBOutlet weak var starsLabel: UILabel!
     @IBOutlet weak var watchersLabel: UILabel!
     @IBOutlet weak var forksLabel: UILabel!
@@ -33,21 +30,20 @@ class ResultViewController: UIViewController {
         watchersLabel.text = "\(repository.watchersCount) watchers"
         forksLabel.text = "\(repository.forksCount) forks"
         issuesLabel.text = "\(repository.openIssuesCount) open issues"
+        
         getImage()
         
     }
     
-    func getImage(){
+    func getImage() {
         
         let repository = searchViewController.items[searchViewController.index]
         titleLabel.text = repository.fullName
-//        let owner = repository.fullName
         let imageURL = repository.owner.avatarUrl
         guard  let url = URL(string: imageURL) else {
             print("error")
             return
         }
-        
         
         let task = URLSession.shared.dataTask(with: url) { (data, response, _) in
             
@@ -55,6 +51,7 @@ class ResultViewController: UIViewController {
                 print("data is nil")
                 return
             }
+            
             let image = UIImage(data: data)
             
             DispatchQueue.main.async {

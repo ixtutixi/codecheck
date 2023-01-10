@@ -20,15 +20,8 @@ class SearchViewController: UITableViewController, UISearchBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         SearchBar.text = "GitHubのリポジトリを検索できるよー"
         SearchBar.delegate = self
-    }
-    
-    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        // ↓こうすれば初期のテキストを消せる
-        searchBar.text = ""
-        return true
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
